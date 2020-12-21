@@ -11,15 +11,24 @@ object Main {
     def matchOk = ( ok && ( rest.length == 0 ) )
   }
 
-  case class ValidationState(val string:String, val rest:String)
+  case class ValidationState(val string:String, val rule:String)
 
-  def validateString(state:ValidationState):ValidationResult = {
-    ValidationResult(false, state.rest)
+  def validateString(state:ValidationState):ValidationResult = {    
+    if(state.string == "") return ValidationResult(ok = true, rest = "")
+    state.rule match {
+      case "\"$terminal\"" => {
+        
+      }
+      case _ => {
+
+      }
+    }
+    ValidationResult(ok = false, rest = state.string)
   }
 
   def countMatchingStrings(rules:Map[String, String], strings:List[String]):Int = {    
     log(s"counting matching strings ( num strings = ${strings.length} , num rules = ${rules.size} )")
-    strings.count(string => validateString(ValidationState(string, "")).matchOk)
+    strings.count(string => validateString(ValidationState(string, rules("0"))).matchOk)
   }
 
   def main(args: Array[String]): Unit = {
