@@ -16,7 +16,7 @@ object Main {
   var rules = Map[String, String]()
 
   def validateString(state:ValidationState):ValidationResult = {    
-    if(state.string.length == 0) return ValidationResult(ok = true, rest = "")
+    if(state.string.length == 0) return ValidationResult(ok = false, rest = "")
     state.rule.replaceAll("\"", "!") match {
       case s"!$terminal!" => {
         val char = state.string.substring(0, 1)
