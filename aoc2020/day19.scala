@@ -48,7 +48,7 @@ object Main {
   }
 
   def main(args: Array[String]): Unit = {
-    scala.io.Source.fromFile("input.txt").mkString.split("\n\n") match {
+    scala.io.Source.fromFile("day19.input.txt").mkString.split("\n\n") match {
       case Array(rulesStr, stringStr) => {
         rules = rulesStr.split("\n").map(_ match {
           case s"$id: $rule" => id -> rule
