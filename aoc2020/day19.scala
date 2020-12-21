@@ -7,9 +7,19 @@ object Main {
     }
   }
 
-  def countMatchingStrings(rules:Map[String, String], strings:List[String]):Int = {
-    log(s"counting matching strings ( num strings = ${strings.length} , num rules = ${rules.size}")
-    0
+  case class ValidationResult(val ok:Boolean, val rest:String){
+    def matchOk = ( ok && ( rest.length == 0 ) )
+  }
+
+  case class ValidationState(val string:String, val rest:String)
+
+  def validateString(state:ValidationState):ValidationResult = {
+    ValidationResult(false, state.rest)
+  }
+
+  def countMatchingStrings(rules:Map[String, String], strings:List[String]):Int = {    
+    log(s"counting matching strings ( num strings = ${strings.length} , num rules = ${rules.size} )")
+    strings.count(string => validateString(ValidationState(string, "")).matchOk)
   }
 
   def main(args: Array[String]): Unit = {
