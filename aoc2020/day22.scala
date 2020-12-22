@@ -13,8 +13,7 @@ object Main {
     val configs = scala.collection.mutable.Set[String]()
     def config = player1.toString() + " | " + player2.toString()
     def result = if(configs.contains(config)) 1 else if(player1.cards.length == 0) 2 else if(player2.cards.length == 0) 1 else 0
-    def total = if(result == 0) 0 else if(result == 1) player1.total else player2.total
-    player2.toString()    
+    def total = if(result == 0) 0 else if(result == 1) player1.total else player2.total    
     def playRound():Boolean = {      
       if(result != 0) return false      
       configs += config
