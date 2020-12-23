@@ -1,3 +1,5 @@
+# https://www.reddit.com/r/adventofcode/comments/kimluc/2020_day_23_solutions/ggsxsgh/?utm_source=reddit&utm_medium=web2x&context=3
+
 import time
 
 def make_circle(cupstring):
