@@ -1,75 +1,84 @@
-import time
+object Main {
+  case class Cup(value:Int){
+    var next:Cup = null
+    override def toString:String = s"$value"
+  }
 
-class Cup():
-  def __init__(self, num):
-    self.num = num
-    self.nextCup = None
-  def __repr__(self):
-    return f"{self.num}"
+  case class Ring(initStr:String){
+    val cups = initStr.split("").map(num => Cup(num.toInt)).toList
+    var mapCups = scala.collection.mutable.Map[Int, Cup](cups.map(cup => cup.value -> cup).toSeq:_*)    
+    for(i <- 0 until cups.length - 1) cups(i).next = cups(i + 1) ; cups.last.next = cups(0)
+    var current = cups(0)
+    override def toString:String = {
+      var ( buff , temp ) = ( "" , mapCups(1) )      
+      do{
+        buff += (if(temp == mapCups(1)) s"(${temp.toString})" else temp.toString)
+        temp = temp.next
+      }while(temp != mapCups(1))
+      buff
+    }
+    def removeNextAt(cup: Cup):Cup = {
+      val nextCup = cup.next
+      cup.next = cup.next.next      
+      nextCup
+    }
+    def removeAt(cup: Cup, size:Int):List[Cup] = (for(_ <- 0 until size) yield removeNextAt(cup)).toList
+    def findCup(value:Int, removed:List[Cup]):Option[Cup] = {
+      if(removed.map(_.value).contains(value)) return None
+      Some(mapCups(value))
+    }
+    var maxValue = 0
+    def move():Unit = {
+      val removed = removeAt(current, 3)            
+      var search = current.value
+      do{
+        search -= 1
+        if(search < 1) search = maxValue
+      }while(findCup(search, removed).isEmpty)
+      val dest = mapCups(search)
+      val destNext = dest.next
+      dest.next = removed(0)
+      removed(2).next = destNext
+      current = current.next
+    }
+    def product:Long = {
+        val cup1 = mapCups(1)
+        val cupNext1 = cup1.next.value.toLong
+        val cupNext2 = cup1.next.next.value.toLong
+        println(cupNext1, cupNext2)
+        cupNext1 * cupNext2
+    }
+    def makeMoves(n:Int, part:Int, verbose:Boolean = false):Unit = {
+      maxValue = mapCups.keySet.max
+      for(i <- 0 until n){
+        move()        
+        if(verbose) if(i % 1000000 == 0) println(i)
+      }
+      if(part == 1) println(this) else println(product)
+    }
+    def augmentTo(size:Int):Ring = {
+      var last = cups.last
+      for(i <- 10 until size + 1){
+        val newCup = Cup(i)
+        mapCups.update(i, newCup)
+        last.next = newCup
+        last = newCup        
+      }
+      last.next = current      
+      this
+    }
+  }
+  
+  def main(args: Array[String]): Unit = {    
+    val t0 = System.nanoTime()
 
-class Ring():
-  def __init__(self, cupsStr, augmentTo = None):
-    self.cups = [Cup(int(num)) for num in list(cupsStr)]
-    if not ( augmentTo is None ):
-      for i in range(10, augmentTo + 1):
-        self.cups.append(Cup(i))
-    self.current = self.cups[0]
-    for i in range(1, len(self.cups)):
-      self.cups[i - 1].nextCup = self.cups[i]
-    self.cups[-1].nextCup = self.cups[0]    
-    self.cupsDict = {cup.num:cup for cup in self.cups}
-    
-  def remove_one_at_cup(self, cup):
-    removed_cup = cup.nextCup
-    cup.nextCup = removed_cup.nextCup
-    return removed_cup
+    Ring("389125467").makeMoves(100, 1)
+	  //Ring("467528193").makeMoves(100, 1)
+    Ring("389125467").augmentTo(1000000).makeMoves(10000000, 2)
+	  //Ring("467528193").augmentTo(1000000).makeMoves(10000000, 2)
 
-  def remove_n_at_cup(self, cup, n):
-    acc = []
-    for _ in range(n):
-      acc.append(self.remove_one_at_cup(cup))
-    return acc
+    val elapsed = (System.nanoTime() - t0) / 1000000L
 
-  def __repr__(self):
-    buff = ""
-    temp = self.cupsDict[1]
-    for i in range(min(len(self.cupsDict), 100)):
-      buff = buff + (temp.__repr__() if i > 0 else "(" + temp.__repr__() + ")")
-      temp = temp.nextCup
-    return buff
-
-  def find_cup_by_num(self, num, removed):
-    if num in [cup.num for cup in removed]:
-      return None    
-    return self.cupsDict[num]
-
-  def move(self):    
-    removed = self.remove_n_at_cup(self.current, 3)
-    temp = len(self.cupsDict) if self.current.num <= 1 else self.current.num - 1
-    while self.find_cup_by_num(temp, removed) is None:
-      temp = len(self.cupsDict) if temp <= 1 else temp - 1
-    insert_cup = self.cupsDict[temp]
-    old_nextCup = insert_cup.nextCup
-    insert_cup.nextCup = removed[0]
-    removed[2].nextCup = old_nextCup
-    self.current = self.current.nextCup
-
-  def make_moves(self, n, part = 1):
-    for i in range(n):
-      self.move()      
-    if part == 1:
-      print(self)
-    else:
-      cup1 = self.cupsDict[1]
-      next1 = cup1.nextCup.num
-      next2 = cup1.nextCup.nextCup.num
-      print(next1, next2, next1 * next2)
-
-t0 = time.time()
-
-Ring("389125467").make_moves(100)
-Ring("389125467", augmentTo = 1000000).make_moves(10000000, 2)
-
-elapsed = int( (time.time() - t0) * 1000 )
-
-print(elapsed)
+    println(elapsed)
+  }
+}
