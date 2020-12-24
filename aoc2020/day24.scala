@@ -39,8 +39,8 @@ println(grid.values.count(identity))
   
 def move(grid:MutMap[Vect, Boolean]):MutMap[Vect, Boolean] = {
   val newGrid = MutMap[Vect, Boolean]()
-  for((vect, flipped) <- grid){
-    var cnt = 0 ; for((_, ndir) <- directions) if(grid.contains(vect.add(ndir))) if(grid(vect.add(ndir))) cnt += 1    
+  for((vect, flipped) <- grid){    
+    val cnt = directions.values.map(ndir => grid.getOrElse(vect.add(ndir), false)).count(identity)
     newGrid.update(vect, if(flipped) if((cnt == 0)||(cnt > 2)) false else flipped else if(cnt == 2) true else flipped)
   }
   newGrid
