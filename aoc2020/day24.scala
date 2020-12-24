@@ -1,5 +1,7 @@
+for(inp <- List("example", "input")){
+println(inp)
 val aoc2020SnippetsBaseUrl = "https://raw.githubusercontent.com/hyperchessbot/snippets/main/aoc2020/"
-val input = scala.io.Source.fromURL(s"$aoc2020SnippetsBaseUrl/day24.input.txt").mkString.split("\n")
+val input = scala.io.Source.fromURL(s"$aoc2020SnippetsBaseUrl/day24.$inp.txt").mkString.split("\n")
 case class Vect(x:Int, y:Int){
   def add(v:Vect):Vect = Vect(x + v.x, y + v.y)
   def mult(s:Int):Vect = Vect(x * s, y * s)
@@ -72,3 +74,4 @@ for(i <- 0 until 100){
   temp = move(temp)
 }
 println(temp.keySet.count(temp(_)))
+}
