@@ -8,3 +8,7 @@ pub async fn get_payment(&self, id: &String) -> Payment {
             let payment: Payment = serde_json::from_str(&res.text().await.unwrap()).unwrap();
             payment
         }
+
+let json : serde_json::Value = serde_json::from_str(&res.text().await.unwrap()).unwrap();
+
+*payment_id = str::replace(&json["id"].to_string(), "\"", "");
